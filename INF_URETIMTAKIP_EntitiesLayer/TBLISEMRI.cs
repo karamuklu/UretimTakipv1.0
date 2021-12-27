@@ -12,6 +12,6 @@ namespace INF_URETIMTAKIP_EntitiesLayer
         [Key]
         public string ISEMRINO { get; set; }
         public string STOK_KODU { get; set; }
-        public double MIKTAR { get; set; }
+        public decimal MIKTAR { get; set; }
     }
 }

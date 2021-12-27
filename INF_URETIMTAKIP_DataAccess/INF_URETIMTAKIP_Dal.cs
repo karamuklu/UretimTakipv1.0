@@ -23,12 +23,11 @@ namespace INF_URETIMTAKIP_DataAccess
                 return context.URETIMDURUMOZET_MKA.Where(i => i.ISEMRINO == isemrino).FirstOrDefault();
             }
         }
-
-        public List<TBLURT_ASAMA> URT_ASAMALIST()
+        public List<URETIMASAMAACIKLAMA> URT_ASAMALIST()
         {
             using (URETIM_DbContext context = new URETIM_DbContext())
             {
-                return context.TBLURT_ASAMA.ToList();
+                return context.URETIMASAMAACIKLAMA.ToList();
             }
         }
         public List<TBLHATBILGI> URTHATBILGISI()
@@ -45,7 +44,6 @@ namespace INF_URETIMTAKIP_DataAccess
                 return context.TBLCALISAN.Where(i => i.ISTASYON == istasyon).ToList();
             }
         }
-
         public List<URETIMDURUMOZET_MKA> URETIMDURUMOZET_MKA()
         {
             using (URETIM_DbContext context = new URETIM_DbContext())
@@ -102,20 +100,12 @@ namespace INF_URETIMTAKIP_DataAccess
         }
         public TBLISEMRI ISEMRIGETIR(string isemrino)
         {
-            using (URETIM_DbContext context = new URETIM_DbContext())
+            using (INF_SUSK_Context context = new INF_SUSK_Context())
             {
                 //var isemri= context.TBLISEMRI.Where(i => i.ISEMRINO == isemrino).FirstOrDefault();
                 //if (isemri!=null)
                 //    return isemri;
-
                 return context.TBLISEMRI.Where(i => i.ISEMRINO == isemrino).FirstOrDefault();
-            }
-        }
-        public BARKOD SERIDEN_ISEMRIBUL(string seriNo)
-        {
-            using (URETIM_DbContext context = new URETIM_DbContext())
-            {
-                return context.BARKOD.Where(i => i.BARKOD_2 == seriNo).First();
             }
         }
         public int TESTCIHAZEKLE(TBLCIHAZTEST testcihaz)
@@ -180,7 +170,6 @@ namespace INF_URETIMTAKIP_DataAccess
                 string sqlCumle = "SELECT t.STOK_KODU, t.ISEMRINO, t.MUSTERI_TIPI, t.VOLTAJ_BILGISI, t.CALISAN, t.SERINO, CASE WHEN t.TEST_TARIHI IS NULL THEN '2021-01-07' ELSE t.TEST_TARIHI END TEST_TARIHI, isnull(t.KAYIPZAMAN, 0)KAYIPZAMAN FROM MKA..TBLCIHAZTEST t ORDER BY TEST_TARIHI DESC";
                 return context.Database.SqlQuery<TBLCIHAZTEST>(sqlCumle).ToList();
             }
-
         }
         public int SERINO_CIHAZKONTROL(string seriNo)
         {
@@ -197,7 +186,7 @@ namespace INF_URETIMTAKIP_DataAccess
         {
             using (URETIM_DbContext context = new URETIM_DbContext())
             {
-                string sqlCumle = "SELECT * FROM TBLURTDURUM where SERI_NO='"+seriNo+"'";
+                string sqlCumle = "SELECT * FROM TBLURTDURUM where SERI_NO='" + seriNo + "'";
                 var sonuc = context.Database.SqlQuery<TBLSERITRA>(sqlCumle).FirstOrDefault();
                 if (sonuc == null)
                     return 0;
@@ -209,6 +198,7 @@ namespace INF_URETIMTAKIP_DataAccess
         {
             using (INF_SUSK_Context context = new INF_SUSK_Context())
             {
+
                 string sqlCumle = "SELECT STOK_KODU,SERI_NO,count(*)ADET FROM TBLSERITRA where SERI_NO like '" + seriNo + "' GROUP BY STOK_KODU,SERI_NO";
                 var sonuc = context.Database.SqlQuery<TBLSERITRA>(sqlCumle).FirstOrDefault();
                 if (sonuc == null)
@@ -216,6 +206,21 @@ namespace INF_URETIMTAKIP_DataAccess
                 else
                     return 1;
             }
+        }
+        public BARKOD CIHAZBUL(string seriNo)
+        {
+            using (URETIM_DbContext context = new URETIM_DbContext())
+            {
+                string sqlCumle = "SELECT * FROM BARKOD where ISEMRINO like '" + seriNo + "' ";
+                return context.Database.SqlQuery<BARKOD>(sqlCumle).FirstOrDefault();
+                //return context.BARKOD.Where(i => i.BARKOD_2 == seriNo).FirstOrDefault();
+            }
+        }
+
+        public List<TBLSTSABIT> stokList()
+        {
+            INF_SUSK_Context ent = new INF_SUSK_Context();
+            return ent.TBLSTSABIT.ToList();
         }
 
     }

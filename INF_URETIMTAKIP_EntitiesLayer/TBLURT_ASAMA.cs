@@ -11,5 +11,6 @@ namespace INF_URETIMTAKIP_EntitiesLayer
         public int ID { get; set; }
         public string URETIM_ASAMA { get; set; }
         public int SIRA { get; set; }
+        public string ASAMA_ACIKLAMA { get; set; }
     }
 }

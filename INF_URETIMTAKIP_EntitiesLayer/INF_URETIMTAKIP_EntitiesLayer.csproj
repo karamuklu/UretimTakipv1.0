@@ -64,8 +64,10 @@
     <Compile Include="TBLISEMRI.cs" />
     <Compile Include="TBLSERITRA.cs" />
     <Compile Include="TBLSTHAR.cs" />
+    <Compile Include="TBLSTSABIT.cs" />
     <Compile Include="TBLURTDURUM.cs" />
     <Compile Include="TBLURT_ASAMA.cs" />
+    <Compile Include="URETIMASAMAACIKLAMA.cs" />
     <Compile Include="URETIMDURUMOZET_COKLU.cs" />
     <Compile Include="URETIMDURUMOZET_MKA.cs" />
     <Compile Include="URETIM_DbContext.cs" />

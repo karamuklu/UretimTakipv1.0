@@ -1,9 +1,11 @@
-﻿using INF_OTO_SUSK_Entities;
-using INF_URETIMTAKIP_Business;
+﻿using INF_URETIMTAKIP_Business;
 using INF_URETIMTAKIP_EntitiesLayer;
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Linq;
 using static INF_URETIMTAKIP_Business.INF_URETIMTAKIP_Manager;
+
 
 namespace INF_URETIMTAKIP_WinForm
 {
@@ -16,24 +18,39 @@ namespace INF_URETIMTAKIP_WinForm
         public int siraNo = 1;
         private TBLISEMRI isemriBilgi = new TBLISEMRI();
         private int miktar = 1;
-
         private void txtIsemri_KeyDown(object sender, KeyEventArgs e)
         {
-            var ilkHarf = "";
             try
             {
                 if (e.KeyCode == Keys.Enter)
                 {
                     string seriNo = txtIsemriNo.Text;
-                    string seridenIsemri = txtIsemriNo.Text.Substring(0, 9);
-                    cmbCalisan.Enabled = false;
-                    //string seriNo=seridenIsemri.Substring
-                    var cihaz = new BARKOD();
+                    //string seridenIsemri = txtIsemriNo.Text.Substring(0, 9);
+                    //cmbCalisan.Enabled = false;
+                    ////string seriNo=seridenIsemri.Substring
+                    //var cihaz = new BARKOD();
 
+                    string seridenIsemri = txtIsemriNo.Text.Substring(0, 9);
+                    string isemriKisa = seridenIsemri.Substring(4);
+                    string seriSonu = seriNo.Substring(9,3);//yeni kontrol
+
+                    string kontrolSeriNo = seriNo.Substring(4,8);
+
+
+                        //isemriKisa + "%" + seriSonu;
+
+
+                    string ilkHarf = isemriKisa.Substring(0, 1);
+                    string isemriSonu = isemriKisa.Substring(1);
+
+                    string kisaIsemri = ilkHarf + "%" + isemriSonu;
+                    var cihaz = infUrttkp_Manager.CIHAZBUL(kisaIsemri);
+
+                    //label2.Text = cihaz.ISEMRINO;
                     if (txtIsemriNo.Text.Length < 15)
                     {
-                        var isemriNo = infUrttkp_Manager.SERIDEN_ISEMRIBUL(seridenIsemri).ISEMRINO;
-                        isemriBilgi = infUrttkp_Manager.ISEMRIGETIR(isemriNo);
+                        //var isemriNo = infUrttkp_Manager.SERIDEN_ISEMRIBUL(seridenIsemri).ISEMRINO;
+                        isemriBilgi = infUrttkp_Manager.ISEMRIGETIR(cihaz.ISEMRINO);//geçen yıldan açılan işemirleri için sorgu genişletecek.
 
                         if (cmbUrtAsama.Text == "TEST")
                         {
@@ -47,8 +64,6 @@ namespace INF_URETIMTAKIP_WinForm
                                 MessageBox.Show("Bu seri daha önceden okutulmuştur");
                                 txtIsemriNo.Clear();
                                 txtIsemriNo.Focus();
-                             
-
                             }
                             else
                             {
@@ -93,16 +108,17 @@ namespace INF_URETIMTAKIP_WinForm
                                 dgvListe.Columns.Clear();
                                 if (infUrttkp_Manager.URUNEKLE(urun) == 0)
                                 {
-                                    AutoClosingMessageBox.Show("Satır eklenmiştir.", "Ekleme İşlemi", 2000);
+                                    //AutoClosingMessageBox.Show("Satır eklenmiştir.", "Ekleme İşlemi", 2000);
 
-                                    dgw_Ekran.DataSource = infUrttkp_Manager.TESTCIHAZLIST();
+                                    dgvListe.DataSource = infUrttkp_Manager.TESTCIHAZLIST();
+                                    txtIsemriNo.Clear();
                                     txtIsemriNo.Focus();
                                 }
                             }
                         }
                         else if (cmbUrtAsama.Text == "KAPAMA")
                         {
-                            if (infUrttkp_Manager.SERINO_NETSISTEVARMI(seriNo) == 0)
+                            if (infUrttkp_Manager.SERINO_NETSISTEVARMI(kontrolSeriNo) == 0)
                             {
                                 if (infUrttkp_Manager.SERINO_URETIMKONTROL(seriNo) == 0)
                                 {
@@ -117,18 +133,18 @@ namespace INF_URETIMTAKIP_WinForm
                                         BASLAMA_TARIH = DateTime.Now.Date,
                                         BASLAMA_SAAT = DateTime.Now.TimeOfDay,
                                         CALISAN = cmbCalisan.Text,
-                                        SERI_NO=seriNo                                        
+                                        SERI_NO = seriNo
                                     };
                                     if (infUrttkp_Manager.URUNEKLE(urun) == 0)
                                     {
-                                        AutoClosingMessageBox.Show("Satır eklenmiştir. SUSK işlemine başlanıyor, Lütfen Bekleyiniz", "Ekleme İşlemi", 2000);
+                                        //AutoClosingMessageBox.Show("Satır eklenmiştir. SUSK işlemine başlanıyor, Lütfen Bekleyiniz", "Ekleme İşlemi", 2000);
                                         dgvListe.Columns.Clear();
-                                        dgw_Ekran.DataSource = infUrttkp_Manager.TESTCIHAZLIST();
+                                        dgvListe.DataSource = infUrttkp_Manager.TESTCIHAZLIST();
                                         label2.Text = "İşlemde olan İşemri Sayısı: " + dgvListe.RowCount.ToString();
 
                                         txtIsemriNo.Clear();
                                         txtIsemriNo.Focus();
-                                        
+
                                     }
                                 }
                             }
@@ -136,22 +152,65 @@ namespace INF_URETIMTAKIP_WinForm
                             txtIsemriNo.Focus();
                         }
                     }
+
+                    else if (txtIsemriNo.Text.Substring(0, 1) == "T")
+                    {
+
+                        //Buraya işemri miktar kontrolü koyulacak
+                        int uretimMiktar = infUrttkp_Manager.URUNOKUTULANMIKTAR(txtIsemriNo.Text, cmbUrtAsama.Text);
+                        isemriBilgi = infUrttkp_Manager.ISEMRIGETIR(txtIsemriNo.Text);
+
+                        TBLURTDURUM urun = new TBLURTDURUM()
+                        {
+                            ISEMRINO = isemriBilgi.ISEMRINO,
+                            STOK_KODU = isemriBilgi.STOK_KODU,
+                            SIRA = siraNo,
+                            HAT_NO = cmbHatBilgi.Text,
+                            MIKTAR = 1,
+                            URETIM_ASAMA = cmbUrtAsama.Text,
+                            BASLAMA_TARIH = DateTime.Now.Date,
+                            BASLAMA_SAAT = DateTime.Now.TimeOfDay,
+                            CALISAN = cmbCalisan.Text
+                        };
+                        dgvListe.Columns.Clear();
+                        if (infUrttkp_Manager.URUNEKLE(urun) == 0)
+                        {
+                            //AutoClosingMessageBox.Show("Satır eklenmiştir.", "Ekleme İşlemi", 2000);
+                            //dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
+                            txtIsemriNo.Clear();
+                            txtIsemriNo.Focus();
+                        }
+                    }
                     else
                     {
                         isemriBilgi = infUrttkp_Manager.ISEMRIGETIR(txtIsemriNo.Text);
-
+                        var isemriNo = isemriBilgi.ISEMRINO;
+                        var stokKodu = isemriBilgi.STOK_KODU;
+                        var isemriSonHarf = isemriBilgi.STOK_KODU.Substring( stokKodu.Length - 2);
                         if (isemriBilgi == null)
                         {
                             AutoClosingMessageBox.Show("İşemri kapalı veya tanımsız", "İşemri Durum Kontrol", 2000);
                             txtIsemriNo.Clear();
                             txtMiktar.Visible = false;
                         }
+                        //Paketleme işemirleri için yazılan kısım
+                        else if (isemriBilgi.ISEMRINO.Substring(0, 1) == "E" && (stokKodu.Substring(0, 2) == "98" || stokKodu.Substring(0, 2) == "98" || isemriSonHarf == "-Y"))
+                        {
+                            txtMiktar.Visible = true;
+                            txtMiktar.Enabled = true;
+                            txtGercekSure.Visible = true;
+                            label6.Visible = true;
+                            label7.Visible = true;
+                            label10.Visible = true;
+                            txtAciklama.Visible = true;
+                            miktar = Convert.ToInt32(isemriBilgi.MIKTAR);
+                            txtMiktar.Text = miktar.ToString();
+                            btnKaydet.Visible = true;
+                        }
 
                         else  //ilk harfine göre yapılan işlemler
                         {
-
                             ilkHarf = txtIsemriNo.Text.Substring(0, 1).ToUpper();
-
                             if (ilkHarf == "S" || ilkHarf == "N" || ilkHarf == "U" || ilkHarf == "H" || ilkHarf == "K" || ilkHarf == "G" || ilkHarf == "B")
                             {
                                 txtMiktar.Visible = true;
@@ -202,7 +261,7 @@ namespace INF_URETIMTAKIP_WinForm
                                         {
                                             AutoClosingMessageBox.Show("Satır eklenmiştir.", "Ekleme İşlemi", 1000);
                                             dgvListe.Columns.Clear();
-                                            dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
+                                            dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
                                             label2.Text = "İşlemde olan İşemri Sayısı: " + dgvListe.RowCount.ToString();
                                             txtIsemriNo.Focus();
                                         }
@@ -255,7 +314,7 @@ namespace INF_URETIMTAKIP_WinForm
 
             var asamaList = infUrttkp_Manager.URT_ASAMALIST();
             cmbUrtAsama.DataSource = asamaList;
-            cmbUrtAsama.DisplayMember = "URETIM_ASAMA";
+            cmbUrtAsama.DisplayMember = "ASAMA_ACIKLAMA";
             cmbUrtAsama.ValueMember = "URETIM_ASAMA";
 
             var hatList = infUrttkp_Manager.URTHATBILGISI();
@@ -265,32 +324,29 @@ namespace INF_URETIMTAKIP_WinForm
 
 
 
-            dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
+            dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
             label2.Text = "İşlemde olan İşemri Sayısı: " + dgvListe.RowCount.ToString();
 
         }
-
         private void btnYenile_Click(object sender, EventArgs e)
         {
             dgvListe.Columns.Clear();
-            dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
+            dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
 
             //if (ilkHarf == "S" || ilkHarf == "N" || ilkHarf == "U" || ilkHarf == "H" || ilkHarf == "K" || ilkHarf == "G")
-            //    dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET_COKLU();
+            //    dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_COKLU();
             //else
-            //    dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET();
+            //    dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET();
 
-            //dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET();
+            //dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET();
         }
-
         private void btnEngelKaldir_Click(object sender, EventArgs e)
         {
             cmbUrtAsama.Enabled = true;
         }
-
         private void btnKaydet_Click(object sender, EventArgs e)
         {
-            string uretim_asama = cmbUrtAsama.Text;
+            string uretim_asama = cmbUrtAsama.SelectedValue.ToString();//cmbUrtAsama.Text;
             string hatNo = cmbHatBilgi.Text;
 
             int uretimMiktar = infUrttkp_Manager.URUNOKUTULANMIKTAR(txtIsemriNo.Text, uretim_asama);
@@ -303,6 +359,10 @@ namespace INF_URETIMTAKIP_WinForm
 
             cmbUrtAsama.Enabled = false;
             var isemriIlkHarf = isemriBilgi.ISEMRINO.Substring(0, 1).ToUpper();
+            var isemriNo = isemriBilgi.ISEMRINO;
+            var stokKodu = isemriBilgi.STOK_KODU;
+            var isemriSonHarf = isemriBilgi.STOK_KODU.Substring( stokKodu.Length - 2);
+
 
             if (isemriBilgi == null)
             {
@@ -351,6 +411,30 @@ namespace INF_URETIMTAKIP_WinForm
                             txtIsemriNo.Focus();
                         }
                     }
+                    else if (isemriBilgi.ISEMRINO.Substring(0, 1) == "E" && (stokKodu.Substring(0, 2) == "98" || stokKodu.Substring(0, 2) == "98" || isemriSonHarf == "-Y"))
+                    {
+                        TBLURTDURUM urun = new TBLURTDURUM()
+                        {
+                            ISEMRINO = isemriBilgi.ISEMRINO,
+                            STOK_KODU = isemriBilgi.STOK_KODU,
+                            SIRA = siraNo,
+                            HAT_NO = cmbHatBilgi.Text,
+                            MIKTAR = Convert.ToInt32(txtMiktar.Text),
+                            URETIM_ASAMA = cmbUrtAsama.Text,
+                            BASLAMA_TARIH = DateTime.Now.Date,
+                            BASLAMA_SAAT = DateTime.Now.TimeOfDay,
+                            CALISAN = cmbCalisan.Text
+                        };
+                        dgvListe.Columns.Clear();
+                        if (infUrttkp_Manager.URUNEKLE(urun) == 0)
+                        {
+                            //AutoClosingMessageBox.Show("Satır eklenmiştir.", "Ekleme İşlemi", 2000);
+
+                            dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
+                            txtIsemriNo.Clear();
+                            txtIsemriNo.Focus();
+                        }
+                    }
                     else
                     {
                         AutoClosingMessageBox.Show(" İstasyon seçimi Yanlış...! Kayıt yapılamadı", "İşemri İstasyon Kontrol", 2000);
@@ -377,24 +461,23 @@ namespace INF_URETIMTAKIP_WinForm
                 if (ilkHarf == "S" || ilkHarf == "N" || ilkHarf == "U" || ilkHarf == "H" || ilkHarf == "K" || ilkHarf == "G" || ilkHarf == "B")
                 {
                     dgvListe.Columns.Clear();
-                    dgw_Ekran.DataSource = null;
+                    dgvListe.DataSource = null;
                     var list = infUrttkp_Manager.URETIMDURUMOZET_COKLU();
-                    dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET_COKLU();
+                    dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_COKLU();
                     label2.Text = "İşlemde olan İşemri Sayısı: " + dgvListe.RowCount.ToString();
                 }
                 else
                 {
                     dgvListe.Columns.Clear();
-                    dgw_Ekran.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
+                    dgvListe.DataSource = infUrttkp_Manager.URETIMDURUMOZET_MKA();
 
                     label2.Text = "İşlemde olan İşemri Sayısı: " + dgvListe.RowCount.ToString();
                 }
             }
         }
-
         private void cmbUrtAsama_SelectedValueChanged(object sender, EventArgs e)
         {
-            var calisanList = infUrttkp_Manager.CALISAN_LIST(cmbUrtAsama.Text.Trim());
+            var calisanList = infUrttkp_Manager.CALISAN_LIST(cmbUrtAsama.SelectedValue.ToString());
             cmbCalisan.DataSource = calisanList;
             cmbCalisan.DisplayMember = "ADISOYADI";
             cmbCalisan.ValueMember = "ID";
@@ -416,11 +499,9 @@ namespace INF_URETIMTAKIP_WinForm
                 cmbMusteriTipi.Visible = false;
                 txtVoltaj.Visible = false;
                 txtKayipZaman.Visible = false;
+                //cmbCalisan.Text = "";
             }
-
-
         }
-
         private void btnCalisanKilit_Click(object sender, EventArgs e)
         {
             cmbCalisan.Enabled = true;

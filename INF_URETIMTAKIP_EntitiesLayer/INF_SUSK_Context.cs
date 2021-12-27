@@ -13,6 +13,9 @@ namespace INF_URETIMTAKIP_EntitiesLayer
         public DbSet<TBLDEPHAR> TBLDEPHAR { get; set; }
         public DbSet<TBLSTHAR> TBLSTHAR { get; set; }
         public DbSet<TBLSERITRA> TBLSERITRA { get; set; }
+        public DbSet<TBLISEMRI> TBLISEMRI { get; set; }
+        public DbSet<TBLSTSABIT> TBLSTSABIT { get; set; }
+        
         public DbSet<DEPOLOKASYONDURUM_MKA> DEPOLOKASYONDURUM_MKA { get; set; }
         //Tabloların sonuna s eklememesi için OnModelCreating metodunu ezdik
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -20,6 +23,8 @@ namespace INF_URETIMTAKIP_EntitiesLayer
             modelBuilder.Entity<TBLDEPHAR>().ToTable("TBLDEPHAR");
             modelBuilder.Entity<TBLSTHAR>().ToTable("TBLSTHAR");
             modelBuilder.Entity<TBLSERITRA>().ToTable("TBLSERITRA");
+            modelBuilder.Entity<TBLISEMRI>().ToTable("TBLISEMRI");
+            modelBuilder.Entity<TBLSTSABIT>().ToTable("TBLSTSABIT");
             modelBuilder.Entity<DEPOLOKASYONDURUM_MKA>().ToTable("DEPOLOKASYONDURUM_MKA");
         }
     }
