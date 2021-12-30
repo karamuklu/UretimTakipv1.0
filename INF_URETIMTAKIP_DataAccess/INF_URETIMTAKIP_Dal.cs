@@ -1,6 +1,7 @@
 ﻿
 using INF_OTO_SUSK_Entities;
 using INF_URETIMTAKIP_EntitiesLayer;
+using INF_URETIMTAKIP_EntitiesLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,12 +217,17 @@ namespace INF_URETIMTAKIP_DataAccess
                 //return context.BARKOD.Where(i => i.BARKOD_2 == seriNo).FirstOrDefault();
             }
         }
-
         public List<TBLSTSABIT> stokList()
         {
             INF_SUSK_Context ent = new INF_SUSK_Context();
             return ent.TBLSTSABIT.ToList();
         }
-
+        public List<MEKANIK_CIZIMLER_MKA> isList()
+        {
+            using (BGContext context = new BGContext())
+            {
+                return context.MEKANIK_CIZIMLER_MKA.ToList();
+            }
+        }
     }
 }

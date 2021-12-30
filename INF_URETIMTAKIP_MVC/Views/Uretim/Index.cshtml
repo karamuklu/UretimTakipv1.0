@@ -1,32 +1,62 @@
-﻿
+﻿@using INF_URETIMTAKIP_EntitiesLayer
+@model List<MEKANIK_CIZIMLER_MKA>
+
 @{
     ViewBag.Title = "Index";
+    //Layout = null;
 }
 
+<section>
+    <br />
+    <br />
 
-<div class="container">
+    <div class="row">
+        <div class="col-lg-1"> </div>
+        <div class="col-lg-10">
+            <table id="example" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>İŞEMRİ NO</th>
+                        <th>STOK KODU</th>
+                        <th>STOK ADI</th>
+                        <th>INF KODU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model)
+                    {
+                        <tr>
+                            <td>@x.ISEMRINO</td>
+                            <td>@x.STOK_KODU</td>
+                            <td>@x.STOK_ADI.Substring(0, 30) </td>
+                            <td>@Convert.ToInt32(x.MIKTAR)</td>
+                            <td><button class="btn btn-dark">Ekle</button></td>
+                            <td><a href="file:\\dattriss001\planlama\MEKANİK DOKÜMANLAR\@String.Format("{0}{1}",x.INF_KODU,".pdf")" class="btn btn-success btn-lg">@x.INF_KODU</a></td>
 
-    <table>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="col-lg-1"> </div>
+    </div>
+</section>
+
+@*<div class="container">
+        <form class="form-group" method="post">
+            <table class="table table-bordered">
+                <tr>
+                    <td><input type="text" placeholder="İşemri No / Seri No" class="form-control" /></td>
+                    <td><input type="text" placeholder="Üretim Aşama veya İstasyon" class="form-control" /></td>
+                    <td><input type="text" placeholder="Çalışan" class="form-control" /></td>
+                    <td><input type="text" placeholder="Hat Bilgisi" class="form-control" /></td>
 
 
-
-        <tr>
-            <form class="form-group" method="post">
-                <td><input type="text" placeholder="İşemri No / Seri No" class="form-control" /></td>
-                <td><input type="text" placeholder="Üretim Aşama veya İstasyon" class="form-control" /></td>
-                <td><input type="text" placeholder="Çalışan" class="form-control" /></td>
-                <td><input type="text" placeholder="Hat Bilgisi" class="form-control" /></td>
-                <td><input type="text" placeholder="Müşteri Bilgisi" class="form-control" /></td>
-                <td><input type="text" placeholder="Voltaj Bilgisi" class="form-control" /></td>
-                <td><input type="text" placeholder="Kayıp Zaman" class="form-control" /></td>
-            </form>
-        </tr>
+                </tr>
+            </table>
+        </form>
 
 
-
-
-    </table>
-
-
-
-</div>
+    </div>*@

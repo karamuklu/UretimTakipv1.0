@@ -351,5 +351,9 @@ namespace INF_URETIMTAKIP_Business
             [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
             static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
         }
+        public List<MEKANIK_CIZIMLER_MKA> isList()
+        {
+            return inf_UrtmTkp_Dal.isList();
+        }
     }
 }

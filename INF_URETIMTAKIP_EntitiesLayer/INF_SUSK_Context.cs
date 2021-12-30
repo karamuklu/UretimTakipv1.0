@@ -15,7 +15,8 @@ namespace INF_URETIMTAKIP_EntitiesLayer
         public DbSet<TBLSERITRA> TBLSERITRA { get; set; }
         public DbSet<TBLISEMRI> TBLISEMRI { get; set; }
         public DbSet<TBLSTSABIT> TBLSTSABIT { get; set; }
-        
+        //public DbSet<MEKANIK_CIZIMLER_MKA> MEKANIK_CIZIMLER_MKA { get; set; }
+
         public DbSet<DEPOLOKASYONDURUM_MKA> DEPOLOKASYONDURUM_MKA { get; set; }
         //Tabloların sonuna s eklememesi için OnModelCreating metodunu ezdik
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -26,6 +27,7 @@ namespace INF_URETIMTAKIP_EntitiesLayer
             modelBuilder.Entity<TBLISEMRI>().ToTable("TBLISEMRI");
             modelBuilder.Entity<TBLSTSABIT>().ToTable("TBLSTSABIT");
             modelBuilder.Entity<DEPOLOKASYONDURUM_MKA>().ToTable("DEPOLOKASYONDURUM_MKA");
+           // modelBuilder.Entity<MEKANIK_CIZIMLER_MKA>().ToTable("MEKANIK_CIZIMLER_MKA");
         }
     }
 }

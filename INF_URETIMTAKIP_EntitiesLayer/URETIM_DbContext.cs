@@ -19,6 +19,7 @@ namespace INF_URETIMTAKIP_EntitiesLayer
         public DbSet<TBLCIHAZTEST> TBLCIHAZTEST { get; set; }
         public DbSet<URETIMASAMAACIKLAMA> URETIMASAMAACIKLAMA { get; set; }
         
+
         //Tabloların sonuna s eklememesi için OnModelCreating metodunu ezdik
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -31,6 +32,8 @@ namespace INF_URETIMTAKIP_EntitiesLayer
             modelBuilder.Entity<BARKOD>().ToTable("BARKOD");
             modelBuilder.Entity<TBLCIHAZTEST>().ToTable("TBLCIHAZTEST");
             modelBuilder.Entity<URETIMASAMAACIKLAMA>().ToTable("URETIMASAMAACIKLAMA");
+            
+
 
         }
 
